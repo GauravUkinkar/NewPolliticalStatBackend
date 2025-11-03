@@ -1,7 +1,21 @@
 package com.pollitica_Stat.Service;
 
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.pollitica_Stat.Dto.Message;
+import com.pollitica_Stat.Dto.VotersDetailsDto;
 
 public interface VoterService {
 	 public String saveVotersFromFile(MultipartFile file, Integer prabhagId);
+	 
+	 public Message<Page<VotersDetailsDto>> searchBySurname(String surname, int page, int size);
+
+	    public Message<Page<VotersDetailsDto>> searchByName(String name, int page, int size);
+
+	    public Message<Page<VotersDetailsDto>> searchByAge(String age, int page, int size);
+
+	    public Message<Page<VotersDetailsDto>> searchByGender(String gender, int page, int size);
+
+	    public Message<Page<VotersDetailsDto>> searchByPrabhag(Integer prabhagId, int page, int size);
 }
