@@ -24,7 +24,7 @@ import com.pollitica_Stat.Repository.PrabhagRepository;
 
 import com.pollitica_Stat.Repository.VoterRepository;
 import com.pollitica_Stat.Service.VoterService;
-import com.pollitica_Stat.Util.Constants;
+
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -102,203 +102,200 @@ public class VoterServiceImpl implements VoterService {
 	@Override
 	public Message<Page<VotersDetailsDto>> searchBySurname(String surname, int page, int size) {
 
-		Message<Page<VotersDetailsDto>> response = new Message<>();
+	    Message<Page<VotersDetailsDto>> response = new Message<>();
 
-		try {
-			int pageIndex = (page > 0) ? page - 1 : 0;
-			Pageable pageable = PageRequest.of(page, size);
+	    try {
+	        // ✅ Adjust for 1-based page index
+	        int pageIndex = (page > 0) ? page - 1 : 0;
 
-			Page<VotersDetails> votersPage = voterRepository
-					.findByVoterEnglishNameStartingWithIgnoreCaseOrVoterMarathiNameStartingWith(surname, surname,
-							pageable);
+	        Pageable pageable = PageRequest.of(pageIndex, size);
 
-			if (votersPage.isEmpty()) {
-				response.setStatus(HttpStatus.NOT_FOUND);
-				response.setResponseMessage("No voters found with entered name");
-				response.setData(null);
-				return response;
-			}
+	        Page<VotersDetails> votersPage = voterRepository
+	                .findByVoterEnglishNameStartingWithIgnoreCaseOrVoterMarathiNameStartingWith(
+	                        surname, surname, pageable);
 
-			// Convert Entity -> DTO list
-			List<VotersDetailsDto> dtoList = votersPage.getContent().stream().map(voter -> {
-				VotersDetailsDto dto = mapToDto(voter);
+	        if (votersPage.isEmpty()) {
+	            response.setStatus(HttpStatus.NOT_FOUND);
+	            response.setResponseMessage("No voters found with entered name");
+	            response.setData(null);
+	            return response;
+	        }
 
-				// Fix: Set PrabhagId in DTO if exists
-				if (voter.getPrabhag() != null) {
-					dto.setPrabhagId(voter.getPrabhag().getPrabhagId());
-				}
+	        // Convert Entity -> DTO list
+	        List<VotersDetailsDto> dtoList = votersPage.getContent().stream().map(voter -> {
+	            VotersDetailsDto dto = mapToDto(voter);
 
-				return dto;
-			}).toList();
+	            // Fix: Set PrabhagId in DTO if exists
+	            if (voter.getPrabhag() != null) {
+	                dto.setPrabhagId(voter.getPrabhag().getPrabhagId());
+	            }
 
-			// Create Page of DTO
-			Page<VotersDetailsDto> dtoPage = new PageImpl<>(dtoList, pageable, votersPage.getTotalElements());
+	            return dto;
+	        }).toList();
 
-			response.setStatus(HttpStatus.OK);
-			response.setResponseMessage("Voter records fetched successfully");
-			response.setData(dtoPage);
+	        // Create Page of DTO
+	        Page<VotersDetailsDto> dtoPage = new PageImpl<>(dtoList, pageable, votersPage.getTotalElements());
 
-		} catch (Exception e) {
-			log.error("Error searching voters by surname: {}", e.getMessage(), e);
-			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-			response.setResponseMessage("Something went wrong. Please try again later.");
-			response.setData(null);
-		}
+	        response.setStatus(HttpStatus.OK);
+	        response.setResponseMessage("Voter records fetched successfully");
+	        response.setData(dtoPage);
 
-		return response;
+	    } catch (Exception e) {
+	        log.error("Error searching voters by surname: {}", e.getMessage(), e);
+	        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+	        response.setResponseMessage("Something went wrong. Please try again later.");
+	        response.setData(null);
+	    }
+
+	    return response;
 	}
 
 	@Override
 	public Message<Page<VotersDetailsDto>> searchByName(String name, int page, int size) {
-		Message<Page<VotersDetailsDto>> response = new Message<>();
+	    Message<Page<VotersDetailsDto>> response = new Message<>();
 
-		try {
-			int pageIndex = (page > 0) ? page - 1 : 0;
-			Pageable pageable = PageRequest.of(page, size);
+	    try {
+	        // ✅ Adjust for 1-based page index
+	        int pageIndex = (page > 0) ? page - 1 : 0;
+	        Pageable pageable = PageRequest.of(pageIndex, size);
 
-			Page<VotersDetails> votersPage = voterRepository
-					.findByVoterEnglishNameContainingIgnoreCaseOrVoterMarathiNameContainingIgnoreCase(name, name,
-							pageable);
+	        Page<VotersDetails> votersPage = voterRepository
+	                .findByVoterEnglishNameContainingIgnoreCaseOrVoterMarathiNameContainingIgnoreCase(
+	                        name, name, pageable);
 
-			if (votersPage.isEmpty()) {
-				response.setStatus(HttpStatus.NOT_FOUND);
-				response.setResponseMessage("No voters found with entered name");
-				response.setData(null);
-				return response;
-			}
+	        if (votersPage.isEmpty()) {
+	            response.setStatus(HttpStatus.NOT_FOUND);
+	            response.setResponseMessage("No voters found with entered name");
+	            response.setData(null);
+	            return response;
+	        }
 
-			// Convert Entity -> DTO list
-			List<VotersDetailsDto> dtoList = votersPage.getContent().stream().map(voter -> {
-				VotersDetailsDto dto = mapToDto(voter);
+	        // Convert Entity -> DTO list
+	        List<VotersDetailsDto> dtoList = votersPage.getContent().stream().map(voter -> {
+	            VotersDetailsDto dto = mapToDto(voter);
 
-				// Fix: Set PrabhagId in DTO if exists
-				if (voter.getPrabhag() != null) {
-					dto.setPrabhagId(voter.getPrabhag().getPrabhagId());
-				}
+	            // Fix: Set PrabhagId in DTO if exists
+	            if (voter.getPrabhag() != null) {
+	                dto.setPrabhagId(voter.getPrabhag().getPrabhagId());
+	            }
 
-				return dto;
-			}).toList();
+	            return dto;
+	        }).toList();
 
-			// Create Page of DTO
-			Page<VotersDetailsDto> dtoPage = new PageImpl<>(dtoList, pageable, votersPage.getTotalElements());
+	        // Create Page of DTO
+	        Page<VotersDetailsDto> dtoPage = new PageImpl<>(dtoList, pageable, votersPage.getTotalElements());
 
-			response.setStatus(HttpStatus.OK);
-			response.setResponseMessage("Voter records fetched successfully");
-			response.setData(dtoPage);
+	        response.setStatus(HttpStatus.OK);
+	        response.setResponseMessage("Voter records fetched successfully");
+	        response.setData(dtoPage);
 
-		} catch (Exception e) {
-			log.error("Error searching voters by surname: {}", e.getMessage(), e);
-			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-			response.setResponseMessage("Something went wrong. Please try again later.");
-			response.setData(null);
-		}
+	    } catch (Exception e) {
+	        log.error("Error searching voters by name: {}", e.getMessage(), e);
+	        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+	        response.setResponseMessage("Something went wrong. Please try again later.");
+	        response.setData(null);
+	    }
 
-		return response;
+	    return response;
 	}
 
 
 	@Override
 	public Message<Page<VotersDetailsDto>> searchByAge(String age, int page, int size) {
-		Message<Page<VotersDetailsDto>> response = new Message<>();
+	    Message<Page<VotersDetailsDto>> response = new Message<>();
 
-		try {
-			int pageIndex = (page > 0) ? page - 1 : 0;
-			Pageable pageable = PageRequest.of(page, size);
+	    try {
+	        // ✅ Adjust for 1-based page index
+	        int pageIndex = (page > 0) ? page - 1 : 0;
+	        Pageable pageable = PageRequest.of(pageIndex, size);
 
-			Page<VotersDetails> votersPage = voterRepository
-					.findByAge(age,
-							pageable);
+	        Page<VotersDetails> votersPage = voterRepository.findByAge(age, pageable);
 
-			if (votersPage.isEmpty()) {
-				response.setStatus(HttpStatus.NOT_FOUND);
-				response.setResponseMessage("No voters found with entered name");
-				response.setData(null);
-				return response;
-			}
+	        if (votersPage.isEmpty()) {
+	            response.setStatus(HttpStatus.NOT_FOUND);
+	            response.setResponseMessage("No voters found with entered age");
+	            response.setData(null);
+	            return response;
+	        }
 
-			// Convert Entity -> DTO list
-			List<VotersDetailsDto> dtoList = votersPage.getContent().stream().map(voter -> {
-				VotersDetailsDto dto = mapToDto(voter);
+	        // Convert Entity -> DTO list
+	        List<VotersDetailsDto> dtoList = votersPage.getContent().stream().map(voter -> {
+	            VotersDetailsDto dto = mapToDto(voter);
 
-				// Fix: Set PrabhagId in DTO if exists
-				if (voter.getPrabhag() != null) {
-					dto.setPrabhagId(voter.getPrabhag().getPrabhagId());
-				}
+	            // ✅ Set PrabhagId if exists
+	            if (voter.getPrabhag() != null) {
+	                dto.setPrabhagId(voter.getPrabhag().getPrabhagId());
+	            }
 
-				return dto;
-			}).toList();
+	            return dto;
+	        }).toList();
 
-			// Create Page of DTO
-			Page<VotersDetailsDto> dtoPage = new PageImpl<>(dtoList, pageable, votersPage.getTotalElements());
+	        // Create Page of DTOs
+	        Page<VotersDetailsDto> dtoPage = new PageImpl<>(dtoList, pageable, votersPage.getTotalElements());
 
-			response.setStatus(HttpStatus.OK);
-			response.setResponseMessage("Voter records fetched successfully");
-			response.setData(dtoPage);
+	        response.setStatus(HttpStatus.OK);
+	        response.setResponseMessage("Voter records fetched successfully");
+	        response.setData(dtoPage);
 
-		} catch (Exception e) {
-			log.error("Error searching voters by surname: {}", e.getMessage(), e);
-			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-			response.setResponseMessage("Something went wrong. Please try again later.");
-			response.setData(null);
-		}
+	    } catch (Exception e) {
+	        log.error("Error searching voters by age: {}", e.getMessage(), e);
+	        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+	        response.setResponseMessage("Something went wrong. Please try again later.");
+	        response.setData(null);
+	    }
 
-		return response;
+	    return response;
 	}
+
 	
 
 	@Override
 	public Message<Page<VotersDetailsDto>> searchByGender(String gender, int page, int size) {
-		Message<Page<VotersDetailsDto>> response = new Message<>();
+	    Message<Page<VotersDetailsDto>> response = new Message<>();
 
-		try {
-			int pageIndex = (page > 0) ? page - 1 : 0;
-			Pageable pageable = PageRequest.of(page, size);
+	    try {
+	        // ✅ Fix pagination to start from 1
+	        int pageIndex = (page > 0) ? page - 1 : 0;
+	        Pageable pageable = PageRequest.of(pageIndex, size);
 
-			Page<VotersDetails> votersPage = voterRepository
-					.findByGender(gender,
-							pageable);
+	        Page<VotersDetails> votersPage = voterRepository.findByGender(gender, pageable);
 
-			if (votersPage.isEmpty()) {
-				response.setStatus(HttpStatus.NOT_FOUND);
-				response.setResponseMessage("No voters found with entered name");
-				response.setData(null);
-				return response;
-			}
+	        if (votersPage.isEmpty()) {
+	            response.setStatus(HttpStatus.NOT_FOUND);
+	            response.setResponseMessage("No voters found with entered gender");
+	            response.setData(null);
+	            return response;
+	        }
 
-			// Convert Entity -> DTO list
-			List<VotersDetailsDto> dtoList = votersPage.getContent().stream().map(voter -> {
-				VotersDetailsDto dto = mapToDto(voter);
+	        // Convert Entity → DTO list
+	        List<VotersDetailsDto> dtoList = votersPage.getContent().stream().map(voter -> {
+	            VotersDetailsDto dto = mapToDto(voter);
 
-				// Fix: Set PrabhagId in DTO if exists
-				if (voter.getPrabhag() != null) {
-					dto.setPrabhagId(voter.getPrabhag().getPrabhagId());
-				}
+	            // ✅ Set PrabhagId if exists
+	            if (voter.getPrabhag() != null) {
+	                dto.setPrabhagId(voter.getPrabhag().getPrabhagId());
+	            }
 
-				return dto;
-			}).toList();
+	            return dto;
+	        }).toList();
 
-			// Create Page of DTO
-			Page<VotersDetailsDto> dtoPage = new PageImpl<>(dtoList, pageable, votersPage.getTotalElements());
+	        // Create Page of DTOs
+	        Page<VotersDetailsDto> dtoPage = new PageImpl<>(dtoList, pageable, votersPage.getTotalElements());
 
-			response.setStatus(HttpStatus.OK);
-			response.setResponseMessage("Voter records fetched successfully");
-			response.setData(dtoPage);
+	        response.setStatus(HttpStatus.OK);
+	        response.setResponseMessage("Voter records fetched successfully");
+	        response.setData(dtoPage);
 
-		} catch (Exception e) {
-			log.error("Error searching voters by surname: {}", e.getMessage(), e);
-			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-			response.setResponseMessage("Something went wrong. Please try again later.");
-			response.setData(null);
-		}
+	    } catch (Exception e) {
+	        log.error("Error searching voters by gender: {}", e.getMessage(), e);
+	        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+	        response.setResponseMessage("Something went wrong. Please try again later.");
+	        response.setData(null);
+	    }
 
-		return response;
+	    return response;
 	}
 
-	@Override
-	public Message<Page<VotersDetailsDto>> searchByPrabhag(Integer prabhagId, int page, int size) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 
@@ -348,52 +345,93 @@ public class VoterServiceImpl implements VoterService {
 	}
 	
 	@Override
-	public Message<Page<VotersDetailsDto>> searchByvillageName(String villageName, int page, int size) {
-		Message<Page<VotersDetailsDto>> response = new Message<>();
+	public Message<Page<VotersDetailsDto>> searchByVillageName(String villageName, int page, int size) {
+	    Message<Page<VotersDetailsDto>> response = new Message<>();
 
-		try {
-			int pageIndex = (page > 0) ? page - 1 : 0;
-			Pageable pageable = PageRequest.of(page, size);
+	    try {
+	        // ✅ Ensure pagination starts from 1
+	        int pageIndex = (page > 0) ? page - 1 : 0;
+	        Pageable pageable = PageRequest.of(pageIndex, size);
 
-			Page<VotersDetails> votersPage = voterRepository
-					.findByvillageName(villageName,
-							pageable);
+	        Page<VotersDetails> votersPage = voterRepository.findByvillageName(villageName, pageable);
 
-			if (votersPage.isEmpty()) {
-				response.setStatus(HttpStatus.NOT_FOUND);
-				response.setResponseMessage("No voters found with entered village name");
-				response.setData(null);
-				return response;
-			}
+	        if (votersPage.isEmpty()) {
+	            response.setStatus(HttpStatus.NOT_FOUND);
+	            response.setResponseMessage("No voters found with entered village name");
+	            response.setData(null);
+	            return response;
+	        }
 
-			// Convert Entity -> DTO list
-			List<VotersDetailsDto> dtoList = votersPage.getContent().stream().map(voter -> {
-				VotersDetailsDto dto = mapToDto(voter);
+	        // Convert Entity → DTO list
+	        List<VotersDetailsDto> dtoList = votersPage.getContent().stream().map(voter -> {
+	            VotersDetailsDto dto = mapToDto(voter);
 
-				// Fix: Set PrabhagId in DTO if exists
-				if (voter.getPrabhag() != null) {
-					dto.setPrabhagId(voter.getPrabhag().getPrabhagId());
-				}
+	            // ✅ Include Prabhag ID if available
+	            if (voter.getPrabhag() != null) {
+	                dto.setPrabhagId(voter.getPrabhag().getPrabhagId());
+	            }
 
-				return dto;
-			}).toList();
+	            return dto;
+	        }).toList();
 
-			// Create Page of DTO
-			Page<VotersDetailsDto> dtoPage = new PageImpl<>(dtoList, pageable, votersPage.getTotalElements());
+	        // Create Page of DTOs
+	        Page<VotersDetailsDto> dtoPage = new PageImpl<>(dtoList, pageable, votersPage.getTotalElements());
 
-			response.setStatus(HttpStatus.OK);
-			response.setResponseMessage("Voter records fetched successfully");
-			response.setData(dtoPage);
+	        response.setStatus(HttpStatus.OK);
+	        response.setResponseMessage("Voter records fetched successfully");
+	        response.setData(dtoPage);
 
-		} catch (Exception e) {
-			log.error("Error searching voters by surname: {}", e.getMessage(), e);
-			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-			response.setResponseMessage("Something went wrong. Please try again later.");
-			response.setData(null);
-		}
+	    } catch (Exception e) {
+	        log.error("Error searching voters by village name: {}", e.getMessage(), e);
+	        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+	        response.setResponseMessage("Something went wrong. Please try again later.");
+	        response.setData(null);
+	    }
 
-		return response;
+	    return response;
 	}
+
+	@Override
+	public Message<Page<VotersDetailsDto>> searchByPrabhag(Integer prabhagId, int page, int size) {
+	    Message<Page<VotersDetailsDto>> response = new Message<>();
+
+	    try {
+	        int pageIndex = (page > 0) ? page - 1 : 0;
+	        Pageable pageable = PageRequest.of(pageIndex, size);
+
+	        Page<VotersDetails> votersPage = voterRepository.findByPrabhagId(prabhagId, pageable);
+
+	        if (votersPage.isEmpty()) {
+	            response.setStatus(HttpStatus.NOT_FOUND);
+	            response.setResponseMessage("No voters found for the given Prabhag ID");
+	            response.setData(null);
+	            return response;
+	        }
+
+	        List<VotersDetailsDto> dtoList = votersPage.getContent().stream().map(voter -> {
+	            VotersDetailsDto dto = mapToDto(voter);
+	            if (voter.getPrabhag() != null) {
+	                dto.setPrabhagId(voter.getPrabhag().getPrabhagId());
+	            }
+	            return dto;
+	        }).toList();
+
+	        Page<VotersDetailsDto> dtoPage = new PageImpl<>(dtoList, pageable, votersPage.getTotalElements());
+
+	        response.setStatus(HttpStatus.OK);
+	        response.setResponseMessage("Voter records fetched successfully");
+	        response.setData(dtoPage);
+
+	    } catch (Exception e) {
+	        log.error("Error searching voters by Prabhag: {}", e.getMessage(), e);
+	        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+	        response.setResponseMessage("Something went wrong. Please try again later.");
+	        response.setData(null);
+	    }
+
+	    return response;
+	}
+
 
 
 

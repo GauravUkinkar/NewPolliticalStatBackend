@@ -159,7 +159,7 @@ public class VotersController {
 	        return;
 	    }
 
-	    Message<Page<VotersDetailsDto>> result = voterService.searchByvillageName(villageName, page, size);
+	    Message<Page<VotersDetailsDto>> result = voterService.searchByVillageName(villageName, page, size);
 	    response.setContentType("application/json");
 	    new com.fasterxml.jackson.databind.ObjectMapper().writeValue(response.getOutputStream(), result);
 	}
