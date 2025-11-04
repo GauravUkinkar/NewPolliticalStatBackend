@@ -1,7 +1,5 @@
 package com.pollitica_Stat.Dto;
 
-import com.pollitica_Stat.Model.Prabhag;
-
 import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;

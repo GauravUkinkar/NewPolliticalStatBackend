@@ -26,4 +26,9 @@ public class Message<T> implements Serializable {
 	
 	private transient T data;
 	private String token;
+	public Message(HttpStatus status, String responseMessage, T data) {
+	    this.status = status;
+	    this.responseMessage = responseMessage;
+	    this.data = data;
+	}
 }

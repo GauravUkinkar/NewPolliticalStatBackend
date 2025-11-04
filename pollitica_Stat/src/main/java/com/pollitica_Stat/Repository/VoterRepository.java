@@ -10,6 +10,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.pollitica_Stat.Dto.VotersDetailsDto;
+import com.pollitica_Stat.Model.Prabhag;
+import com.pollitica_Stat.Model.Village;
 import com.pollitica_Stat.Model.VotersDetails;
 
 @Repository
@@ -33,12 +35,6 @@ public interface VoterRepository extends JpaRepository<VotersDetails, Integer> {
     @Query("SELECT v FROM VotersDetails v WHERE v.prabhag.prabhagId = :prabhagId")
     Page<VotersDetails> findByPrabhagId(@Param("prabhagId") Integer prabhagId, Pageable pageable);
 
-    
-    @Query("SELECT new com.pollitica_Stat.Dto.VotersDetailsDto(" +
-    	       "v.voterId, v.voterEnglishName, v.voterMarathiName, v.age, v.houseNo, v.gender) " +
-    	       "FROM VotersDetails v " +
-    	       "JOIN v.prabhag p " +
-    	       "JOIN p.villages vil " +
-    	       "WHERE LOWER(vil.villageName) = LOWER(:villageName)")
-    	List<VotersDetailsDto> findVotersByVillageName(@Param("villageName") String villageName);
+	 List<VotersDetails> findByPrabhag(Prabhag prabhag);
+
 }

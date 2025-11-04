@@ -22,7 +22,7 @@ public class Village {
 
     private String villageName;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "prabhag_id", referencedColumnName = "prabhagId")
+    @JoinColumn(name = "prabhag_id")
     private Prabhag prabhag;
 
     

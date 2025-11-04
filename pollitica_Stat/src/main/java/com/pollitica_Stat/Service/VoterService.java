@@ -22,5 +22,7 @@ public interface VoterService {
 
 	    public Message<Page<VotersDetailsDto>> searchByPrabhag(Integer prabhagId, int page, int size);
 	    
-	    List<VotersDetailsDto> getVotersByVillageName(String villageName);
+		public List<VotersDetailsDto> getVotersByVillageName(String villageName) ;
+		
+		public Message<Page<VotersDetailsDto>> getAllVoterDetails(int page, int size)  ;
 }

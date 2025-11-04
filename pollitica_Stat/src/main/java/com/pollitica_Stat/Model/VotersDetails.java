@@ -31,5 +31,8 @@ public class VotersDetails {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "prabhag_id", referencedColumnName = "prabhagId")
     private Prabhag prabhag;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "village_id")
+	private Village village;
 
 }

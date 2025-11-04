@@ -10,5 +10,6 @@ public interface Constants {
 	String PRABHAG_FOUND_SUCCESSFULLY = "Prabhag Found Successfully";
 	String VILLAGE_ADDED_SUCCESSFULLY = "Village Added Successfully";
 	String VILLAGE_ALREADY_EXISTS = "Village Already Exists";
+	String SOMETHING_WENT_WRONG = "Something went Wrong";
 
 }
