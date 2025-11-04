@@ -7,9 +7,9 @@ import com.pollitica_Stat.Dto.Message;
 import com.pollitica_Stat.Dto.PrabhagRequestDto;
 import com.pollitica_Stat.Mapper.PrabhagMapper;
 import com.pollitica_Stat.Model.Prabhag;
-import com.pollitica_Stat.Model.Village;
+
 import com.pollitica_Stat.Repository.PrabhagRepository;
-import com.pollitica_Stat.Repository.VillageRepository;
+
 import com.pollitica_Stat.Service.PrabhagService;
 import com.pollitica_Stat.Util.Constants;
 
@@ -22,7 +22,7 @@ import lombok.extern.log4j.Log4j2;
 public class PrabhagServiceImpl implements PrabhagService {
 	private final PrabhagMapper prabhagMapper;
 	private final PrabhagRepository prabhagRepository;
-	private final VillageRepository villageRepository;
+
 
 	@Override
 	public Message<PrabhagRequestDto> addPrabhag(PrabhagRequestDto request) {
@@ -32,10 +32,7 @@ public class PrabhagServiceImpl implements PrabhagService {
 		if(prabhag==null) {
 			prabhag=prabhagMapper.toPrabhag(request);
 			prabhagRepository.save(prabhag);
-			
-			Village village = new Village();
-			village.setPrabhag(prabhag);
-			villageRepository.save(village);
+
 			message.setStatus(HttpStatus.OK);
 			message.setResponseMessage(Constants.PRABHAG_ADDED_SUCCESSFULLY);
 			message.setData(prabhagMapper.toPrabhagResponseDto(prabhag));

@@ -32,8 +32,7 @@ public class Prabhag {
 	@OneToMany(mappedBy = "prabhag", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<VotersDetails> voters = new ArrayList<>();
 
-	@OneToMany(mappedBy = "prabhag", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Village> villages = new ArrayList<>();
+
 
 	 
 

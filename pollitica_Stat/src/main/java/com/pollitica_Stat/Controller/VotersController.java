@@ -140,11 +140,7 @@ public class VotersController {
 	    new com.fasterxml.jackson.databind.ObjectMapper().writeValue(response.getOutputStream(), result);
 	}
 	
-	@GetMapping("/by-village/{villageName}")
-	public List<VotersDetailsDto> getVotersByVillage(
-	        @PathVariable String villageName) {
-	    return voterService.getVotersByVillageName( villageName);
-	}
+
 	@GetMapping("/voters/all")
 	public void getAllVoterDetails(
 	        @RequestParam(defaultValue = "1") int page,

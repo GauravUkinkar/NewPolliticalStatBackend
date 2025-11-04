@@ -9,9 +9,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.pollitica_Stat.Dto.VotersDetailsDto;
+
 import com.pollitica_Stat.Model.Prabhag;
-import com.pollitica_Stat.Model.Village;
+
 import com.pollitica_Stat.Model.VotersDetails;
 
 @Repository

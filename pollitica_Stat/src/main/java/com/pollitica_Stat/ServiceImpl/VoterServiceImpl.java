@@ -18,10 +18,10 @@ import com.pollitica_Stat.Dto.Message;
 import com.pollitica_Stat.Dto.VotersDetailsDto;
 import com.pollitica_Stat.Mapper.VotersDetailsMapper;
 import com.pollitica_Stat.Model.Prabhag;
-import com.pollitica_Stat.Model.Village;
+
 import com.pollitica_Stat.Model.VotersDetails;
 import com.pollitica_Stat.Repository.PrabhagRepository;
-import com.pollitica_Stat.Repository.VillageRepository;
+
 import com.pollitica_Stat.Repository.VoterRepository;
 import com.pollitica_Stat.Service.VoterService;
 import com.pollitica_Stat.Util.Constants;
@@ -36,7 +36,7 @@ import lombok.extern.log4j.Log4j2;
 public class VoterServiceImpl implements VoterService {
 	private final PrabhagRepository prabhagService;
 	private final VoterRepository voterRepository;
-	private final VillageRepository villageRepository;
+
 	private final VotersDetailsMapper votersDetailsMapperImpl;
 
 	private VotersDetailsDto mapToDto(VotersDetails v) {
@@ -292,40 +292,6 @@ public class VoterServiceImpl implements VoterService {
 	public Message<Page<VotersDetailsDto>> searchByPrabhag(Integer prabhagId, int page, int size) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public List<VotersDetailsDto> getVotersByVillageName(String villageName) {
-
-	    // 1. Find village by name
-	    Village village = villageRepository.findByVillageName(villageName);
-	    if (village == null) {
-	        throw new RuntimeException("Village not found with name: " + villageName);
-	    }
-
-	    // 2. Get prabhag linked to that village
-	    Prabhag prabhag = village.getPrabhag();
-	    if (prabhag == null) {
-	        throw new RuntimeException("No Prabhag found for village: " + villageName);
-	    }
-
-	    // 3. Fetch all voters under that prabhag
-	    List<VotersDetails> voters = voterRepository.findByPrabhag(prabhag);
-
-	    // 4. Map voters to DTO
-	    return voters.stream()
-	            .map(v -> new VotersDetailsDto()
-	                    .setId(v.getId())
-	                    .setVoterId(v.getVoterId())
-	                    .setVoterEnglishName(v.getVoterEnglishName())
-	                    .setVotersFatherEnglishName(v.getVotersFatherEnglishName())
-	                    .setVoterMarathiName(v.getVoterMarathiName())
-	                    .setVotersFatherMarathiName(v.getVotersFatherMarathiName())
-	                    .setAge(v.getAge())
-	                    .setHouseNo(v.getHouseNo())
-	                    .setGender(v.getGender())
-	                    .setPrabhagId(prabhag.getPrabhagId()))
-	            .toList();
 	}
 
 	@Override
