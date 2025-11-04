@@ -29,11 +29,12 @@ public class Prabhag {
 	private String villageName;
 	private String jilhaName;
 	
-	 @OneToMany(mappedBy = "prabhag", cascade = CascadeType.ALL, orphanRemoval = true)
-	    private List<VotersDetails> voters = new ArrayList<>();
-	 @OneToMany(cascade = CascadeType.ALL)
-	    @JoinColumn(name = "prabhag_id")  
-	    private List<Village> villages = new ArrayList<>();
+	@OneToMany(mappedBy = "prabhag", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<VotersDetails> voters = new ArrayList<>();
+
+	@OneToMany(mappedBy = "prabhag", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Village> villages = new ArrayList<>();
+
 	 
 
 }

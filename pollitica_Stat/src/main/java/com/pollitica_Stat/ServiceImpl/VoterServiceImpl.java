@@ -285,4 +285,9 @@ public class VoterServiceImpl implements VoterService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	   @Override
+	    public List<VotersDetailsDto> getVotersByVillageName(String villageName) {
+	        return voterRepository.findVotersByVillageName(villageName);
+	    }
 }

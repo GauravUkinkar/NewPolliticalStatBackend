@@ -1,5 +1,7 @@
 package com.pollitica_Stat.Repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -7,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.pollitica_Stat.Dto.VotersDetailsDto;
 import com.pollitica_Stat.Model.VotersDetails;
 
 @Repository
@@ -30,4 +33,12 @@ public interface VoterRepository extends JpaRepository<VotersDetails, Integer> {
     @Query("SELECT v FROM VotersDetails v WHERE v.prabhag.prabhagId = :prabhagId")
     Page<VotersDetails> findByPrabhagId(@Param("prabhagId") Integer prabhagId, Pageable pageable);
 
+    
+    @Query("SELECT new com.pollitica_Stat.Dto.VotersDetailsDto(" +
+    	       "v.voterId, v.voterEnglishName, v.voterMarathiName, v.age, v.houseNo, v.gender) " +
+    	       "FROM VotersDetails v " +
+    	       "JOIN v.prabhag p " +
+    	       "JOIN p.villages vil " +
+    	       "WHERE LOWER(vil.villageName) = LOWER(:villageName)")
+    	List<VotersDetailsDto> findVotersByVillageName(@Param("villageName") String villageName);
 }

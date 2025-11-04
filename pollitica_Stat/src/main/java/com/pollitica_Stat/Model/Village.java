@@ -21,6 +21,9 @@ public class Village {
     private int id;
 
     private String villageName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "prabhag_id", referencedColumnName = "prabhagId")
+    private Prabhag prabhag;
 
     
 }
