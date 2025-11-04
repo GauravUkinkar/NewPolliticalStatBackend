@@ -103,6 +103,7 @@ public class VoterServiceImpl implements VoterService {
 		Message<Page<VotersDetailsDto>> response = new Message<>();
 
 		try {
+			int pageIndex = (page > 0) ? page - 1 : 0;
 			Pageable pageable = PageRequest.of(page, size);
 
 			Page<VotersDetails> votersPage = voterRepository
@@ -150,6 +151,7 @@ public class VoterServiceImpl implements VoterService {
 		Message<Page<VotersDetailsDto>> response = new Message<>();
 
 		try {
+			int pageIndex = (page > 0) ? page - 1 : 0;
 			Pageable pageable = PageRequest.of(page, size);
 
 			Page<VotersDetails> votersPage = voterRepository
@@ -198,6 +200,7 @@ public class VoterServiceImpl implements VoterService {
 		Message<Page<VotersDetailsDto>> response = new Message<>();
 
 		try {
+			int pageIndex = (page > 0) ? page - 1 : 0;
 			Pageable pageable = PageRequest.of(page, size);
 
 			Page<VotersDetails> votersPage = voterRepository
@@ -246,6 +249,7 @@ public class VoterServiceImpl implements VoterService {
 		Message<Page<VotersDetailsDto>> response = new Message<>();
 
 		try {
+			int pageIndex = (page > 0) ? page - 1 : 0;
 			Pageable pageable = PageRequest.of(page, size);
 
 			Page<VotersDetails> votersPage = voterRepository
@@ -295,11 +299,15 @@ public class VoterServiceImpl implements VoterService {
 	}
 
 	@Override
+
 	public Message<Page<VotersDetailsDto>> getAllVoterDetails(int page, int size) {
 	    Message<Page<VotersDetailsDto>> response = new Message<>();
 
 	    try {
-	        Pageable pageable = PageRequest.of(page, size);
+	        // Adjust for 1-based page index
+	        int pageIndex = (page > 0) ? page - 1 : 0;
+
+	        Pageable pageable = PageRequest.of(pageIndex, size);
 	        Page<VotersDetails> votersPage = voterRepository.findAll(pageable);
 
 	        if (votersPage.isEmpty()) {
@@ -313,7 +321,6 @@ public class VoterServiceImpl implements VoterService {
 	        List<VotersDetailsDto> dtoList = votersPage.getContent().stream().map(voter -> {
 	            VotersDetailsDto dto = mapToDto(voter);
 
-	            // Fix: Set PrabhagId in DTO if exists
 	            if (voter.getPrabhag() != null) {
 	                dto.setPrabhagId(voter.getPrabhag().getPrabhagId());
 	            }
@@ -337,6 +344,7 @@ public class VoterServiceImpl implements VoterService {
 
 	    return response;
 	}
+
 
 
 		
