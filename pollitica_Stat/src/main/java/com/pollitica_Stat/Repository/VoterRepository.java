@@ -36,5 +36,6 @@ public interface VoterRepository extends JpaRepository<VotersDetails, Integer> {
     Page<VotersDetails> findByPrabhagId(@Param("prabhagId") Integer prabhagId, Pageable pageable);
 
 	 List<VotersDetails> findByPrabhag(Prabhag prabhag);
+	 Page<VotersDetails> findByvillageName(String villageName, Pageable pageable);
 
 }

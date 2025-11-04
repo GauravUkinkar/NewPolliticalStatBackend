@@ -23,7 +23,7 @@ public class SwaggerConfig {
                 .description("API documentation for Master Backend Project"))
             .servers(List.of(
                 new Server().url("http://localhost:1234/"),
-                new Server().url("https://masteruserservice.pandozasolutions.com/")
+                new Server().url("https://internaltomcat.diwise.in/PolliticalStat/")
             ));
     }
 }

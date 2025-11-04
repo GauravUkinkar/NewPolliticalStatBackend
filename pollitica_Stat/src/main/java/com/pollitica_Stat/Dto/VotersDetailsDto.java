@@ -18,4 +18,6 @@ public class VotersDetailsDto {
 	private String houseNo;
 	private String gender;
 	private Integer prabhagId; 
+	private String villageName;
+
 }

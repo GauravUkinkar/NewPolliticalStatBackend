@@ -140,6 +140,29 @@ public class VotersController {
 	    new com.fasterxml.jackson.databind.ObjectMapper().writeValue(response.getOutputStream(), result);
 	}
 	
+	@GetMapping("/search/village")
+	public void searchByVillage(
+	        @RequestParam String villageName,
+	        @RequestParam(defaultValue = "1") int page,
+	        @RequestParam(defaultValue = "10") int size,
+	        @RequestParam(defaultValue = "false") boolean export,
+	        HttpServletResponse response
+	) throws IOException {
+
+	    if (export) {
+	        List<VotersDetails> voters = voterRepository
+	            .findByvillageName(
+	            		villageName, Pageable.unpaged()
+	            ).getContent();
+
+	        excelExportService.exportVoters(voters, "voters_by_village", response);
+	        return;
+	    }
+
+	    Message<Page<VotersDetailsDto>> result = voterService.searchByvillageName(villageName, page, size);
+	    response.setContentType("application/json");
+	    new com.fasterxml.jackson.databind.ObjectMapper().writeValue(response.getOutputStream(), result);
+	}
 
 	@GetMapping("/voters/all")
 	public void getAllVoterDetails(

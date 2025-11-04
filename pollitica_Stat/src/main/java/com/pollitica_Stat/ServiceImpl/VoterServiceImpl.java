@@ -63,7 +63,7 @@ public class VoterServiceImpl implements VoterService {
 			while ((line = br.readLine()) != null) {
 
 				String[] data = line.split(",", -1);
-				if (data.length < 9)
+				if (data.length < 10)
 					continue;
 
 				String voterId = data[1].trim();
@@ -83,7 +83,9 @@ public class VoterServiceImpl implements VoterService {
 				voter.setAge(data[6]);
 				voter.setHouseNo(data[7]);
 				voter.setGender(data[8]);
+				voter.setVillageName(data[9]);
 				voter.setPrabhag(prabhag);
+				
 
 				voterRepository.save(voter);
 				saved++;
@@ -343,6 +345,54 @@ public class VoterServiceImpl implements VoterService {
 	    }
 
 	    return response;
+	}
+	
+	@Override
+	public Message<Page<VotersDetailsDto>> searchByvillageName(String villageName, int page, int size) {
+		Message<Page<VotersDetailsDto>> response = new Message<>();
+
+		try {
+			int pageIndex = (page > 0) ? page - 1 : 0;
+			Pageable pageable = PageRequest.of(page, size);
+
+			Page<VotersDetails> votersPage = voterRepository
+					.findByvillageName(villageName,
+							pageable);
+
+			if (votersPage.isEmpty()) {
+				response.setStatus(HttpStatus.NOT_FOUND);
+				response.setResponseMessage("No voters found with entered village name");
+				response.setData(null);
+				return response;
+			}
+
+			// Convert Entity -> DTO list
+			List<VotersDetailsDto> dtoList = votersPage.getContent().stream().map(voter -> {
+				VotersDetailsDto dto = mapToDto(voter);
+
+				// Fix: Set PrabhagId in DTO if exists
+				if (voter.getPrabhag() != null) {
+					dto.setPrabhagId(voter.getPrabhag().getPrabhagId());
+				}
+
+				return dto;
+			}).toList();
+
+			// Create Page of DTO
+			Page<VotersDetailsDto> dtoPage = new PageImpl<>(dtoList, pageable, votersPage.getTotalElements());
+
+			response.setStatus(HttpStatus.OK);
+			response.setResponseMessage("Voter records fetched successfully");
+			response.setData(dtoPage);
+
+		} catch (Exception e) {
+			log.error("Error searching voters by surname: {}", e.getMessage(), e);
+			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+			response.setResponseMessage("Something went wrong. Please try again later.");
+			response.setData(null);
+		}
+
+		return response;
 	}
 
 
