@@ -437,6 +437,44 @@ public class VoterServiceImpl implements VoterService {
 
 	    return response;
 	}
+	
+	@Override
+	public Message<Page<String>> getAllVillage(int page, int size) {
+	    Message<Page<String>> response = new Message<>();
+
+	    try {
+	        // Fetch all distinct village names (duplicates removed)
+	        List<String> allVillages = voterRepository.findDistinctVillageNames();
+
+	        if (allVillages.isEmpty()) {
+	            response.setStatus(HttpStatus.NOT_FOUND);
+	            response.setResponseMessage("No villages found");
+	            response.setData(null);
+	            return response;
+	        }
+
+	        // Apply pagination manually since we're returning distinct names
+	        int pageIndex = (page > 0) ? page - 1 : 0;
+	        int start = Math.min(pageIndex * size, allVillages.size());
+	        int end = Math.min(start + size, allVillages.size());
+
+	        List<String> pagedVillages = allVillages.subList(start, end);
+	        Page<String> villagePage = new PageImpl<>(pagedVillages, PageRequest.of(pageIndex, size), allVillages.size());
+
+	        response.setStatus(HttpStatus.OK);
+	        response.setResponseMessage("Unique village names fetched successfully");
+	        response.setData(villagePage);
+
+	    } catch (Exception e) {
+	        log.error("Error fetching village names: {}", e.getMessage(), e);
+	        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+	        response.setResponseMessage("Something went wrong. Please try again later.");
+	        response.setData(null);
+	    }
+
+	    return response;
+	}
+
 
 
 

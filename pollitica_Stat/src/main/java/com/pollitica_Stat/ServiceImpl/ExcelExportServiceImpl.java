@@ -93,4 +93,43 @@ public class ExcelExportServiceImpl implements ExcelExportService {
 	private String nullToEmpty(Object obj) {
 		return obj == null ? "" : obj.toString();
 	}
+	@Override
+	public void exportVillages(List<String> villages, String fileName, HttpServletResponse response) throws IOException {
+	    Objects.requireNonNull(villages, "villages list must not be null");
+	    if (fileName == null || fileName.isBlank()) {
+	        fileName = "villages_export";
+	    }
+
+	    response.setContentType("application/octet-stream");
+	    response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".xlsx");
+
+	    try (Workbook workbook = new XSSFWorkbook()) {
+	        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Villages");
+
+	        // Header
+	        Row headerRow = sheet.createRow(0);
+	        CellStyle headerStyle = workbook.createCellStyle();
+	        XSSFFont font = (XSSFFont) workbook.createFont();
+	        font.setBold(true);
+	        headerStyle.setFont(font);
+
+	        Cell cell = headerRow.createCell(0);
+	        cell.setCellValue("Village Name");
+	        cell.setCellStyle(headerStyle);
+
+	        // Data
+	        int rowNum = 1;
+	        for (String village : villages) {
+	            Row row = sheet.createRow(rowNum++);
+	            row.createCell(0).setCellValue(nullToEmpty(village));
+	        }
+
+	        sheet.autoSizeColumn(0);
+
+	        ServletOutputStream outputStream = response.getOutputStream();
+	        workbook.write(outputStream);
+	        outputStream.flush();
+	    }
+	}
+
 }
