@@ -48,56 +48,62 @@ public class VoterServiceImpl implements VoterService {
 
 	@Override
 	public String saveVotersFromFile(MultipartFile file, Integer prabhagId) {
-		try {
-			Prabhag prabhag = prabhagService.findByPrabhagId(prabhagId);
-			if (prabhag == null) {
-				return "❌ Invalid Prabhag ID: " + prabhagId;
-			}
+	    try {
+	        Prabhag prabhag = prabhagService.findByPrabhagId(prabhagId);
+	        if (prabhag == null) {
+	            return "❌ Invalid Prabhag ID: " + prabhagId;
+	        }
 
-			BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream()));
-			String line;
-			int saved = 0, skipped = 0;
+	        BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream()));
+	        String line;
+	        int saved = 0, skipped = 0;
 
-			br.readLine(); // skip header
+	        List<String> skippedVoterIds = new ArrayList<>();
 
-			while ((line = br.readLine()) != null) {
+	        br.readLine(); // Skip header
 
-				String[] data = line.split(",", -1);
-				if (data.length < 10)
-					continue;
+	        while ((line = br.readLine()) != null) {
 
-				String voterId = data[1].trim();
+	            String[] data = line.split(",", -1);
+	            if (data.length < 10) continue; // Need 10 columns
 
-				// Skip if voter already exists
-				if (voterRepository.existsByVoterId(voterId)) {
-					skipped++;
-					continue;
-				}
+	            String voterId = data[1].trim();
+	            if (voterId.isEmpty()) continue;
 
-				VotersDetails voter = new VotersDetails();
-				voter.setVoterId(voterId);
-				voter.setVoterEnglishName(data[2]);
-				voter.setVoterMarathiName(data[3]);
-				voter.setVotersFatherEnglishName(data[4]);
-				voter.setVotersFatherMarathiName(data[5]);
-				voter.setAge(data[6]);
-				voter.setHouseNo(data[7]);
-				voter.setGender(data[8]);
-				voter.setVillageName(data[9]);
-				voter.setPrabhag(prabhag);
-				
+	            // If voter already exists — skip
+	            if (voterRepository.existsByVoterId(voterId)) {
+	                skipped++;
+	                skippedVoterIds.add(voterId);
+	                continue;
+	            }
 
-				voterRepository.save(voter);
-				saved++;
-			}
+	            VotersDetails voter = new VotersDetails();
+	            voter.setVoterId(voterId);
+	            voter.setVoterEnglishName(data[2].trim());
+	            voter.setVoterMarathiName(data[3].trim());
+	            voter.setVotersFatherEnglishName(data[4].trim());
+	            voter.setVotersFatherMarathiName(data[5].trim());
+	            voter.setAge(data[6].trim());
+	            voter.setHouseNo(data[7].trim());
+	            voter.setGender(data[8].trim());
+	            voter.setVillageName(data[9].trim());
+	            voter.setPrabhag(prabhag);
 
-			return "✅ Upload Completed\n" + "Saved: " + saved + "\n" + "Skipped (existing): " + skipped;
+	            voterRepository.save(voter);
+	            saved++;
+	        }
 
-		} catch (Exception e) {
-			log.error("Error uploading voters CSV", e);
-			return "❌ Error: " + e.getMessage();
-		}
+	        return "✅ Upload Completed\n"
+	                + "Saved: " + saved + "\n"
+	                + "Skipped (already exists): " + skipped + "\n"
+	                + "Skipped Voter IDs: " + skippedVoterIds;
+
+	    } catch (Exception e) {
+	        log.error("Error uploading voters CSV", e);
+	        return "❌ Error: " + e.getMessage();
+	    }
 	}
+
 
 	@Override
 	public Message<Page<VotersDetailsDto>> searchBySurname(String surname, int page, int size) {
