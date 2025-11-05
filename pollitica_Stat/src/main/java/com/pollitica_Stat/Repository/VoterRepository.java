@@ -37,5 +37,10 @@ public interface VoterRepository extends JpaRepository<VotersDetails, Integer> {
 
 	 List<VotersDetails> findByPrabhag(Prabhag prabhag);
 	 Page<VotersDetails> findByvillageName(String villageName, Pageable pageable);
+	 
+	 @Query("SELECT DISTINCT v.villageName FROM VotersDetails v WHERE v.villageName IS NOT NULL ORDER BY v.villageName ASC")
+	 List<String> findDistinctVillageNames();
+
+
 
 }

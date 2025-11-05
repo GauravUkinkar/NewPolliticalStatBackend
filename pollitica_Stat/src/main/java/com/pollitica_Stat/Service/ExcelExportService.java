@@ -9,5 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public interface ExcelExportService {
     void exportVoters(List<VotersDetails> voters, String fileName, HttpServletResponse response) throws IOException;
+    public void exportVillages(List<String> villages, String fileName, HttpServletResponse response) throws IOException;
 
 }

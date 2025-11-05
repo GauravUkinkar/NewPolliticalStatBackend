@@ -1,5 +1,7 @@
 package com.pollitica_Stat.ServiceImpl;
 
+
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -7,9 +9,7 @@ import com.pollitica_Stat.Dto.Message;
 import com.pollitica_Stat.Dto.PrabhagRequestDto;
 import com.pollitica_Stat.Mapper.PrabhagMapper;
 import com.pollitica_Stat.Model.Prabhag;
-
 import com.pollitica_Stat.Repository.PrabhagRepository;
-
 import com.pollitica_Stat.Service.PrabhagService;
 import com.pollitica_Stat.Util.Constants;
 
@@ -26,32 +26,44 @@ public class PrabhagServiceImpl implements PrabhagService {
 
 	@Override
 	public Message<PrabhagRequestDto> addPrabhag(PrabhagRequestDto request) {
-	Message<PrabhagRequestDto> message = new Message<>();
-	try {
-		Prabhag prabhag=prabhagRepository.findByPrabhagId(request.getPrabhagId());
-		if(prabhag==null) {
-			prabhag=prabhagMapper.toPrabhag(request);
-			prabhagRepository.save(prabhag);
+	    Message<PrabhagRequestDto> message = new Message<>();
 
-			message.setStatus(HttpStatus.OK);
-			message.setResponseMessage(Constants.PRABHAG_ADDED_SUCCESSFULLY);
-			message.setData(prabhagMapper.toPrabhagResponseDto(prabhag));
-			return message;
-		}else {
-			message.setStatus(HttpStatus.OK);
-			message.setResponseMessage(Constants.PRABHAG_ALREADY_EXISTS);
-			message.setData(prabhagMapper.toPrabhagResponseDto(prabhag));
-			return message;
-		}
-	} catch (Exception e) {
-		// TODO Auto-generated catch block
-		log.error(e.getMessage());
-		String error = e.getMessage();
-		message.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-		message.setResponseMessage(error);
-		return message;
+	    try {
+	        Prabhag existingPrabhag = prabhagRepository.findByPrabhagId(request.getPrabhagId());
+
+	        if (existingPrabhag == null) {
+	            Prabhag newPrabhag = new Prabhag();
+	            newPrabhag.setPrabhagId(request.getPrabhagId());
+	            newPrabhag.setName(request.getName());
+	            newPrabhag.setJilhaName(request.getJilhaName());
+
+	            // ✅ join list of villages into one string (comma-separated)
+	            if (request.getVillageNames() != null && !request.getVillageNames().isEmpty()) {
+	                String combinedVillages = String.join(",", request.getVillageNames());
+	                newPrabhag.setVillageName(combinedVillages);
+	            }
+
+	            prabhagRepository.save(newPrabhag);
+
+	            message.setStatus(HttpStatus.OK);
+	            message.setResponseMessage(Constants.PRABHAG_ADDED_SUCCESSFULLY);
+	            message.setData(request);
+	        } else {
+	            message.setStatus(HttpStatus.OK);
+	            message.setResponseMessage(Constants.PRABHAG_ALREADY_EXISTS);
+	            message.setData(request);
+	        }
+
+	    } catch (Exception e) {
+	        log.error("Error while adding prabhag: {}", e.getMessage());
+	        message.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+	        message.setResponseMessage("Error: " + e.getMessage());
+	    }
+
+	    return message;
 	}
-	}
+
+
 
 	@Override
 	public Message<PrabhagRequestDto> updatePrabhag(PrabhagRequestDto request) {
